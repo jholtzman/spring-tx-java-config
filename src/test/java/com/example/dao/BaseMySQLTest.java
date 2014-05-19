@@ -2,6 +2,7 @@ package com.example.dao;
 
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -29,8 +30,13 @@ abstract public class BaseMySQLTest extends AbstractTransactionalJUnit4SpringCon
     @EnableTransactionManagement
     public static class TestConfig {
         @Bean
-        public PlatformTransactionManager providesTransactionManager(ListableBeanFactory beanFactory) {
+        public PlatformTransactionManager transactionManager(ListableBeanFactory beanFactory) {
             return new DataSourceTransactionManager(beanFactory.getBean(DataSource.class));
+        }
+
+        @Bean
+        public PropertyPlaceholderConfigurer placeholderConfigurer() {
+            return new PropertyPlaceholderConfigurer();
         }
     }
 }
