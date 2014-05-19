@@ -5,11 +5,15 @@ import com.example.dao.model.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 public class UserDaoImplTest extends BaseMySQLTest {
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Autowired
     private UserDao userDao;
@@ -21,7 +25,7 @@ public class UserDaoImplTest extends BaseMySQLTest {
     @Test
     public void testById() throws Exception {
         jdbcTemplate.execute("insert into mgdb.users (email) values ('bob@example.com')");
-        int userId = lastInsertId();
+        int userId = lastInsertId(jdbcTemplate);
         Optional<User> userOptional = userDao.byId(userId);
         assertThat(userOptional.isPresent(), equalTo(true));
         User user = userOptional.get();
@@ -31,7 +35,7 @@ public class UserDaoImplTest extends BaseMySQLTest {
     @Test
     public void testByIdNoUser() throws Exception {
         jdbcTemplate.execute("insert into mgdb.users (email) values ('bob@example.com')");
-        int userId = lastInsertId();
+        int userId = lastInsertId(jdbcTemplate);
         jdbcTemplate.execute("delete from mgdb.users where id=" + userId);
 
         Optional<User> userOptional = userDao.byId(userId);
